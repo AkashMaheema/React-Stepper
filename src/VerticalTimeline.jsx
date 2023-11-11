@@ -1,6 +1,8 @@
 // VerticalTimeline.js
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import './Timeline.css'
+
+import lottie from 'lottie-web';
 import {
   VerticalTimeline,
   VerticalTimelineElement,
@@ -8,6 +10,24 @@ import {
 import "react-vertical-timeline-component/style.min.css";
 
 const VerticalTimelineComponent = () => {
+  const LottieContainer = useRef(null);
+    let animationInstance = null;
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        animationInstance = lottie.loadAnimation({
+            container: LottieContainer.current,
+            render: 'svg',
+            loop: true,
+            autoplay: true,
+            animationData: require('./json/web.json')
+        });
+
+        return () => {
+            animationInstance.destroy(); // This will clean up the animation instance when the component is unmounted
+        }
+    }, []);
+
   const [showDetails, setShowDetails] = useState(Array(5).fill(false));
 
   const handleToggleDetails = (index) => {
@@ -17,6 +37,7 @@ const VerticalTimelineComponent = () => {
   };
 
   return (
+
     <VerticalTimeline className="timeline">
       {[0, 1, 2, 3, 4].map((index) => (
         <VerticalTimelineElement
@@ -25,6 +46,7 @@ const VerticalTimelineComponent = () => {
             showDetails[index] ? "open" : ""
           }`}
           date=""
+          ref={LottieContainer}
           contentStyle={{ background: 'rgba(0, 238, 255, 0.356)', color: '#fff' }}
           contentArrowStyle={{ borderRight: '7px solid rgba(0, 238, 255, 0.356)' }}
           iconStyle={{ background: "#050100", cursor: "pointer" }}
@@ -32,7 +54,7 @@ const VerticalTimelineComponent = () => {
         >
           <h3
             className={`vertical-timeline-element-title text-white text-center`}
-            onClick={() => handleToggleDetails(index)}
+            onClick={() => handleToggleDetails(index)} ref={LottieContainer}
           >
             Event {index + 1}
           </h3>
